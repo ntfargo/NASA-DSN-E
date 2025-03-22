@@ -35,14 +35,14 @@ The NASA Deep Space Network (DSN) is critical for communicating with spacecraft 
    python src/main.py
 
 2. Access the Web Dashboard:
-   - Open your browser to http://localhost:5000 after starting the app.
+   - Open your browser to http://localhost:5001 after starting the app.
 
 3. Example Output:
    - View real-time DSN activity graphs and predictions for upcoming communication windows.
  
 ## Dependencies
 
-- Python 3.8+
+- Python 3.10+
 - Libraries: pandas, scikit-learn, flask, requests, matplotlib (see requirements.txt)
 
 ## Contributing
