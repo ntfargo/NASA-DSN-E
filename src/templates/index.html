@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #1e293b;
+            --accent-color: #3b82f6;
+            --background-color: #f1f5f9;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--background-color);
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nasa-logo {
+            width: 80px;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            font-weight: 600;
+            color: white;
+        }
+
+        tr {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        tr:hover {
+            background-color: var(--background-color);
+        }
+
+        tr.selected {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        tr.selected:hover {
+            background-color: var(--accent-color);
+            opacity: 0.9;
+        }
+
+        .plot-container {
+            margin: 2rem 0;
+            background: var(--card-background);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .plot-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: start;
+        }
+
+        .data-grid .card {
+            margin-bottom: 0;
+        }
+
+        .spacecraft-details {
+            padding: 1rem 0;
+        }
+
+        .spacecraft-details table {
+            margin: 0;
+        }
+
+        .spacecraft-details th {
+            width: 120px;
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .spacecraft-details td {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://eyes.nasa.gov/apps/dsn-now/images/nasa_logo@2x.png" alt="NASA Logo" class="nasa-logo">
+            <h1>{{ title }}</h1>
+        </div>
+        <div class="data-grid">
+            <div class="card">
+                <h2>Current Deep Space Network Data</h2>
+                <div class="timestamp">
+                    <!-- Show timestamp only once -->
+                    {{ data.0.timestamp if data }}
+                </div>
+                <div id="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Spacecraft</th>
+                                <th>Antenna</th>
+                                <th>Signal Strength</th>
+                                <th>Predicted Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in data %}
+                            <tr>
+                                <td>{{ item.spacecraft }}</td>
+                                <td>{{ item.antenna_id }}</td>
+                                <td>{{ item.signal_strength }}</td>
+                                <td>{{ item.communication_duration }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Details</h2>
+                <div class="spacecraft-details" id="spacecraft-details">
+                    <div id="spacecraft-info">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>Spacecraft</th>
+                                    <td id="spacecraft-name">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Data Rate</th>
+                                    <td id="data-rate">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Received Power</th>
+                                    <td id="power">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Frequency</th>
+                                    <td id="frequency">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Range</th>
+                                    <td id="range">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if plot_url %}
+        <div class="card">
+            <h2>Signal Strength Plot</h2>
+            <div class="plot-container" id="plot-container">
+                <img src="data:image/png;base64,{{ plot_url }}" alt="Signal Strength Plot">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const socket = io();
+        
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        // Add click handler for table rows
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.querySelector('#data-table table');
+            if (table) {
+                table.addEventListener('click', (e) => {
+                    const row = e.target.closest('tr');
+                    if (row) {
+                        // Remove selected class from all rows
+                        table.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+                        // Add selected class to clicked row
+                        row.classList.add('selected');
+                        
+                        // Get data from the row
+                        const spacecraft = row.cells[1].textContent;
+                        const antenna = row.cells[2].textContent;
+                        const timestamp = row.cells[0].textContent;
+                        
+                        // Update spacecraft details
+                        updateSpacecraftDetails({
+                            spacecraft: spacecraft,
+                            antenna_id: antenna,
+                            timestamp: timestamp
+                        });
+                    }
+                });
+            }
+        });
+
+        socket.on('update_data', (data) => {
+            // Update table
+            const table = document.querySelector('#data-table table');
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            data.data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.spacecraft}</td>
+                    <td>${item.antenna_id}</td>
+                    <td>${item.signal_strength}</td>
+                    <td>${item.communication_duration}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update plot if available
+            if (data.plot_url) {
+                const plotContainer = document.getElementById('plot-container');
+                if (plotContainer) {
+                    const img = plotContainer.querySelector('img');
+                    if (img) {
+                        img.src = `data:image/png;base64,${data.plot_url}`;
+                    }
+                }
+            }
+
+            // Update spacecraft details if data is available
+            if (data.data && data.data.length > 0) {
+                const latestData = data.data[0];
+                updateSpacecraftDetails(latestData);
+            }
+        });
+
+        function updateSpacecraftDetails(data) {
+            const startTime = new Date(data.timestamp);
+            const endTime = new Date(startTime.getTime() + 60000); // Add 1 minute
+
+            fetch(`/spacecraft_details?spacecraft_name=${encodeURIComponent(data.spacecraft)}&antenna=${encodeURIComponent(data.antenna_id)}&start=${startTime.toUTCString()}&end=${endTime.toUTCString()}`)
+                .then(response => response.json())
+                .then(details => {
+                    document.getElementById('spacecraft-name').textContent = details.spacecraft;
+                    document.getElementById('data-rate').textContent = details.data_rate;
+                    document.getElementById('power').textContent = details.power;
+                    document.getElementById('frequency').textContent = details.frequency;
+                    document.getElementById('range').textContent = details.range;
+                })
+                .catch(error => {
+                    console.error('Error fetching spacecraft details:', error);
+                });
+        }
+    </script>
+</body>
+</html>

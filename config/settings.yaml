@@ -1,0 +1,31 @@
+# Main configuration file for NASA-DSN-E
+
+# Data Source Settings
+data:
+  dsnnow_url: "https://eyes.nasa.gov/dsn/data/dsn.xml"
+  scrape_interval: 300
+  backup_source: "https://www.cdscc.nasa.gov/Pages/trackingtoday.html"
+
+# Database Settings (Updated for SQLite)
+database:
+  file: "data/dsn_data.db"  # Path to SQLite database file
+  table: "communication_logs"
+
+# Machine Learning Settings
+ml:
+  model_path: "data/models/predictive_model.pkl"
+  training_data: "data/historical_logs.csv"
+  features:
+    - "signal_strength"
+    - "antenna_id"
+    - "timestamp"
+  target: "communication_duration"
+  retrain_interval: 86400
+
+# Web Dashboard Settings
+webapp:
+  host: "0.0.0.0"
+  port: 5001
+  debug: true
+  title: "NASA-DSN-E Dashboard"
+  theme: "dark"
