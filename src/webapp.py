@@ -105,9 +105,11 @@ def create_app(web_config, monitor, predictor):
             if not all([spacecraft_name, antenna, start_time, end_time]):
                 return jsonify({"error": "Missing required parameters"}), 400
             
+            # Validate and parse start_time and end_time
             try:
+                start_timestamp = datetime.strptime(start_time, "%a, %d %b %Y %H:%M:%S GMT")
                 end_timestamp = datetime.strptime(end_time, "%a, %d %b %Y %H:%M:%S GMT")
-                logger.debug(f"Parsed end_timestamp: {end_timestamp}")
+                logger.debug(f"Parsed start_timestamp: {start_timestamp}, end_timestamp: {end_timestamp}")
             except ValueError as e:
                 logger.error(f"Error parsing timestamp: {e}")
                 return jsonify({"error": f"Invalid timestamp format: {str(e)}"}), 400
