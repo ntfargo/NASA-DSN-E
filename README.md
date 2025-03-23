@@ -8,51 +8,69 @@ The NASA Deep Space Network (DSN) is critical for communicating with spacecraft 
 
 ## Features
 
-- Real-Time Monitoring: Visualize current DSN spacecraft communications.
-- Historical Analysis: Track and graph past DSN activity.
-- Predictive Analytics: Use machine learning to forecast communication patterns.
-- Web Dashboard: Access insights through an intuitive interface.
+- **Real-Time Monitoring**: Visualize current DSN spacecraft communications.
+- **Historical Analysis**: Track and graph past DSN activity.
+- **Predictive Analytics**: Use machine learning to forecast communication patterns.
+- **Web Dashboard**: Access insights through an intuitive interface.
 
 ## Installation
 
-1. Clone the Repository:
+1. **Clone the Repository**:
+   ```bash
    git clone https://github.com/ntfargo/NASA-DSN-E.git
    cd NASA-DSN-E
+   ```
 
-2. Set Up a Virtual Environment (optional but recommended):
+2. **Set Up a Virtual Environment** (optional but recommended):
+   ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-3. Install Dependencies:
+3. **Install Dependencies**:
+   ```bash
    pip install -r requirements.txt
+   ```
 
-4. Configure Settings:
-   - Edit config/settings.yaml with your preferences (e.g., API endpoints, model parameters).
+4. **Configure Settings**:
+   - Edit `config/settings.yaml` with your preferences (e.g., API endpoints, model parameters).
 
 ## Usage
 
-1. Run the Main Script:
+1. **Run the Main Script**:
+   ```bash
    python src/main.py
+   ```
 
-2. Access the Web Dashboard:
-   - Open your browser to http://localhost:5001 after starting the app.
+2. **Access the Web Dashboard**:
+   - Open your browser to `http://localhost:5001` after starting the app.
 
-3. Example Output:
+3. **Example Output**:
    - View real-time DSN activity graphs and predictions for upcoming communication windows.
- 
+
 ## Dependencies
 
-- Python 3.10+
-- Libraries: pandas, scikit-learn, flask, requests, matplotlib (see requirements.txt)
+- **Python**: 3.10+
+- **Libraries**: pandas, scikit-learn, flask, requests, matplotlib (see `requirements.txt`)
 
 ## Contributing
 
 We welcome contributions! To get started:
-1. Fork the repository.
-2. Create a feature branch (git checkout -b feature-name).
-3. Commit your changes (git commit -m "Add feature").
-4. Push to your branch (git push origin feature-name).
-5. Open a Pull Request.
+
+1. **Fork the repository**.
+2. **Create a feature branch**:
+   ```bash
+   git checkout -b feature-name
+   ```
+3. **Commit your changes**:
+   ```bash
+   git commit -m "Add feature"
+   ```
+4. **Push to your branch**:
+   ```bash
+   git push origin feature-name
+   ```
+5. **Open a Pull Request**.
 
 Please follow the [Code of Conduct](docs/CODE_OF_CONDUCT.md) and check the [issues page](https://github.com/ntfargo/NASA-DSN-E/issues) for tasks.
 
@@ -61,5 +79,5 @@ Please follow the [Code of Conduct](docs/CODE_OF_CONDUCT.md) and check the [issu
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
- 
+
 - Inspired by NASA’s open-source initiatives and JPL’s Deep Space Network.
